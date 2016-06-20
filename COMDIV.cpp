@@ -7,6 +7,8 @@ using namespace std;
 
 #define pb push_back
 
+int gcd(int A, int B);
+
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 typedef long long ll;
@@ -20,19 +22,26 @@ int main(){
 	vi primes;
 	sieve[1] = 0;
 	for(int i=0; i<=S; i+=2){
-		sieve[i] = 1;
+		sieve[i] = 0;
 	}
 	sieve[2] = 1;
 	primes.pb(2);
 	int SS = sqrt(S);
-	for(int i=3; i<=SS+1; i++){
+	for(int i=3; i<=SS+1; i+=2){
 		if(sieve[i] == 1){
-			primes.pb(i);
+			//primes.pb(i);
 			for(int j=i*i; j<=S; j+=2*i){
 				sieve[j] = 0;
 			}
 		}
 	}
+
+	for(int i=3; i<=S; i+=2){
+		if(sieve[i] == 1){
+			primes.pb(i);
+		}
+	}
+	//cout<<"No of primes upto 10^3 is "<<primes.size()<<endl;
 
 	int t;
 	//cin>>t;
@@ -41,26 +50,21 @@ int main(){
 		int A, B;
 		//cin>>A>>B;
 		scanf("%d %d", &A, &B);
+		int g = gcd(max(A, B), min(A, B));
 		int res = 1;
 		auto it = primes.begin();
-		while((A>1 || B>1) && (it!=primes.end())){
-			int p1 = 0, p2 = 0;
+		while(g>1 && it!=primes.end()){
+			int p1 = 0;
 			int p = *it;
-			while((A%p == 0) || (B%p == 0)){
-				if(A%p == 0){
-					p1++;
-					A /= p;
-				}
-				if((B%p == 0)){
-					p2++;
-					B /= p;
-				}
+			while(g%p == 0){
+				p1++;
+				g /= p;
 			}
-			res *= min(p1+1, p2+1);
+			res *= (p1+1);
 			it++;
 		}
 
-		if((A>1 || B>1) && (A==B)){
+		if(g>1){
 			res *= 2;
 		}
 
@@ -70,4 +74,14 @@ int main(){
 
 
 	return 0;
+}
+
+int gcd(int A, int B){
+	while(B != 0){
+		int t = A%B;
+		A = B;
+		B = t;
+	}
+
+	return A;
 }
